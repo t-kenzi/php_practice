@@ -1,0 +1,6 @@
+services:
+  php:
+    build: .
+    working_dir: /php_base
+    volumes:
+      - ./:/php_base
