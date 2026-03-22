@@ -51,7 +51,7 @@ class Bus extends Vehicle{
 }
 
 $A = new Bus(0, 20, 50, 1);
-$A->speedUp(0);
+$A->speedUp(1);
 print("{$A->speed}".PHP_EOL);
 print("{$A->ride(1)}".PHP_EOL);
 print("{$A->getOff(1)}".PHP_EOL);
