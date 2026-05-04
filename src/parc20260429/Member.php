@@ -23,6 +23,53 @@ class Member
     // - この会員の借りている本リストを更新する
     // - メッセージ出力はしない
 
-    private int 
+    private int $memberId;
+    private string $memberName;
+    private array $borrowBookLists;
+
+    public function __construct($memberId,$memberName)
+    {
+        $this->memberId = $memberId;
+        $this->memberName = $memberName;
+        $this->borrowBookLists = [];
+    }
+
+    public function getMemberId(){
+        return $this->memberId;
+    }
+
+    public function getMemberName(){
+        return $this->memberName;
+    }
+    
+    public function getBookLists(){
+        return $this->borrowBookLists;
+    }
+
+    public function addBorrowBook(int $bookId){
+        $this->borrowBookLists[] = $bookId;
+    }
+
+    public function removeBorrowBook(int $bookId){
+        $index = array_search($bookId, $this->borrowBookLists, true);
+        if($index !== false){
+            unset($this->borrowBookLists[$index]);
+        }
+    }
+
+    public function searchBookLists(int $bookId){
+        $check = array_search($bookId,$this->borrowBookLists,true);
+        if($check !== false){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function countBooks(){
+        $books = count($this->borrowBookLists);
+        return $books;
+    }
+
 }
 
