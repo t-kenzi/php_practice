@@ -27,9 +27,31 @@ class LibraryCatalog
         $this->booklists = [];
     }
 
-    public function registerBook(int $id,string $title,$lendStatus = false){
-        $newBook = new Book();
-
+    public function registerBook(int $id, string $title, bool $lendStatus = false): void
+    {
+        $newBook = new Book($id, $title, $lendStatus);
+        $this->booklists[] = $newBook;
     }
-}
 
+    public function searchBook(int $id){
+        foreach($this->booklists as $book){
+            if($book->getBookId() === $id){
+                return $book;
+            }
+        }
+    }
+
+    public function checkBook(int $id){
+        foreach($this->booklists as $book){
+            if($book->getBookId() === $id){
+                return true;
+                }
+            }
+            return false;
+    }
+
+    public function getBookLists(){
+        return $this->booklists;
+    }
+
+}
