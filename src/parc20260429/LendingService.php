@@ -1,30 +1,81 @@
 <?php
+include "php_base/src/parc20260429/LibraryCatalog.php";
+include "php_base/src/parc20260429/Member.php";
 
 class LendingService
 {
-    // 保持する情報
-    // - LibraryCatalog
-    // - 会員一覧
+    private LibraryCatalog $libraryCatalog;
+    private array $memberLists;
 
-    // 持つべき機能
-    // - 会員を登録する
-    // - 本を貸し出す
-    // - 本を返却する
-    // - 会員が存在するか確認する
-    // - 会員IDで会員を取得する
+    public function __construct(LibraryCatalog $libraryCatalog)
+    {
+        $this->libraryCatalog = $libraryCatalog;
+        $this->memberLists = [];
+    }
 
-    // 責務
-    // - 本の貸出・返却という業務処理を管理する
-    // - 複数オブジェクトにまたがる整合性を管理する
-    //
-    // 貸出処理で更新するもの
-    // - Book の状態を貸出中にする
-    // - Member の借りている本一覧に追加する
-    //
-    // 返却処理で更新するもの
-    // - Book の状態を返却済みにする
-    // - Member の借りている本一覧から削除する
-    //
-    // 整合性管理
-    // - Book と Member の両方にまたがる処理を担当する
+    public function registerMember(int $id, string $name): void
+    {
+        $newMember = new Member($id, $name);
+        $this->memberLists[] = $newMember;
+    }
+
+    public function checkMember(int $memberId): bool
+    {
+        foreach ($this->memberLists as $member) {
+            if ($member->getMemberId() === $memberId) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function searchMember(int $memberId)
+    {
+        foreach ($this->memberLists as $member) {
+            if ($member->getMemberId() === $memberId) {
+                return $member;
+            }
+        }
+
+        return null;
+    }
+
+    public function borrowBook(int $memberId, int $bookId): bool
+    {
+        $member = $this->searchMember($memberId);
+        $book = $this->libraryCatalog->searchBook($bookId);
+
+        if ($member === null || $book === null) {
+            return false;
+        }
+
+        if ($book->getLendStatus() === true) {
+            return false;
+        }
+
+        $book->lendBook();
+        $member->addBorrowBook($bookId);
+
+        return true;
+    }
+
+    public function returnBook(int $memberId, int $bookId): bool
+    {
+        $member = $this->searchMember($memberId);
+        $book = $this->libraryCatalog->searchBook($bookId);
+
+        if ($member === null || $book === null) {
+            return false;
+        }
+
+        if ($member->searchBookLists($bookId) === false) {
+            return false;
+        }
+
+        $book->returnBook();
+        $member->removeBorrowBook($bookId);
+
+        return true;
+    }
 }
